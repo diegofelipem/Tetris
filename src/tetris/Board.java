@@ -15,6 +15,7 @@ import tetris.Shape.Tetrominoes;
 
 public class Board extends JPanel implements ActionListener {
 
+	private static final long serialVersionUID = 1L;
 	private final int BoardWidth = 10;
 	private final int BoardHeight = 22;
 
@@ -30,7 +31,7 @@ public class Board extends JPanel implements ActionListener {
 	private Tetrominoes[] board;
 
 	public Board(Tetris parent) {
-
+		
 		initBoard(parent);
 	}
 
@@ -39,7 +40,7 @@ public class Board extends JPanel implements ActionListener {
 		setFocusable(true);
 		curPiece = new Shape();
 		timer = new Timer(400, this);
-		timer.start();
+		timer.stop();
 
 		statusbar = parent.getStatusBar();
 		board = new Tetrominoes[BoardWidth * BoardHeight];
@@ -86,7 +87,7 @@ public class Board extends JPanel implements ActionListener {
 		timer.start();
 	}
 
-	private void pause() {
+	public void pause() {
 
 		if (!isStarted)
 			return;
@@ -165,6 +166,8 @@ public class Board extends JPanel implements ActionListener {
 
 		for (int i = 0; i < BoardHeight * BoardWidth; ++i)
 			board[i] = Tetrominoes.NoShape;
+		
+		statusbar.setText(String.valueOf(numLinesRemoved));
 	}
 
 	private void pieceDropped() {
@@ -304,24 +307,29 @@ public class Board extends JPanel implements ActionListener {
 				break;
 
 			case KeyEvent.VK_DOWN:
-				tryMove(curPiece.rotateRight(), curX, curY);
+//				tryMove(curPiece.rotateRight(), curX, curY);
+				oneLineDown();
 				break;
 
 			case KeyEvent.VK_UP:
-				tryMove(curPiece.rotateLeft(), curX, curY);
+//				tryMove(curPiece.rotateLeft(), curX, curY);
+				tryMove(curPiece.rotateRight(), curX, curY);
 				break;
 
 			case KeyEvent.VK_SPACE:
 				dropDown();
 				break;
-
-			case 'd':
-				oneLineDown();
-				break;
-
-			case 'D':
-				oneLineDown();
-				break;
+				
+			case KeyEvent.VK_N:
+				start();
+				
+//			case 'd':
+//				oneLineDown();
+//				break;
+//
+//			case 'D':
+//				oneLineDown();
+//				break;
 			}
 		}
 	}

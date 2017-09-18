@@ -1,50 +1,78 @@
 package tetris;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
 
 public class Tetris extends JFrame {
 
-    private JLabel statusbar;
+	private static final long serialVersionUID = 1L;
+	private JLabel statusbar;
+	private Board board;
 
-    public Tetris() {
-        
-        initUI();
-   }
-    
-   private void initUI() {
+	public Tetris() {
 
-        statusbar = new JLabel(" 0");
-        add(statusbar, BorderLayout.SOUTH);
-        Board board = new Board(this);
-        add(board);
-        board.start();
+		initUI();
+	}
 
-        setSize(200, 400);
-        setTitle("Tetris");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);       
-   }
+	private JFrame getInstance() {
+		return this;
+	}
 
-   public JLabel getStatusBar() {
-       
-       return statusbar;
-   }
+	private void initUI() {
 
-    public static void main(String[] args) {
+		statusbar = new JLabel("0");
+		board = new Board(this);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                
-                Tetris game = new Tetris();
-                game.setVisible(true);
-            }
-        });                
-    } 
+		JPanel southPane = new JPanel(new BorderLayout(5, 5));
+		southPane.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.black));
+		southPane.add(statusbar, BorderLayout.WEST);
+
+		JLabel helpLabel = new JLabel("<html><a href='#'>HELP</a></html>");
+		helpLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		helpLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				board.pause();
+				new GameWizard(getInstance(), true).setVisible(true);
+				board.pause();
+			}
+		});
+
+		southPane.add(helpLabel, BorderLayout.EAST);
+		add(southPane, BorderLayout.SOUTH);
+		add(board, BorderLayout.CENTER);
+		board.start();
+
+		setResizable(false);
+		setPreferredSize(new Dimension(250, 500));
+		setTitle("Tetris");
+		pack();
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+
+	}
+
+	public JLabel getStatusBar() {
+
+		return statusbar;
+	}
+
+	public static void main(String[] args) {
+
+		SwingUtilities.invokeLater(() -> {
+
+			Tetris game = new Tetris();
+			game.setVisible(true);
+		});
+	}
 }
