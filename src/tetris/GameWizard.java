@@ -26,7 +26,7 @@ public class GameWizard extends JDialog {
 	public GameWizard(Frame owner, boolean isModal) {
 		super(owner, isModal);
 
-		setPreferredSize(new Dimension(290, 200));
+		setPreferredSize(new Dimension(owner.getSize().width-10, 200));
 		setUndecorated(true);
 		setBackground(Color.WHITE);
 		JTextPane infoPane = new JTextPane();
