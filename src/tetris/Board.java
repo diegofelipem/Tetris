@@ -7,17 +7,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
-import tetris.Shape.Tetrominoes;
 
 public class Board extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private final int BoardWidth = 10;
-	private final int BoardHeight = 22;
+	private final int BoardHeight = 20;
 
 	private Timer timer;
 	private boolean isFallingFinished = false;
@@ -26,23 +26,26 @@ public class Board extends JPanel implements ActionListener {
 	private int numLinesRemoved = 0;
 	private int curX = 0;
 	private int curY = 0;
-	private JLabel statusbar;
+	private JLabel scoreLabel;
+	private JLabel alertLabel;
 	private Shape curPiece;
 	private Tetrominoes[] board;
+	private TetrisMain parent;
 
-	public Board(Tetris parent) {
-		
-		initBoard(parent);
+	public Board(TetrisMain parent) {
+		this.parent = parent;
+		initBoard();
 	}
 
-	private void initBoard(Tetris parent) {
+	private void initBoard() {
 
 		setFocusable(true);
 		curPiece = new Shape();
 		timer = new Timer(400, this);
-		timer.stop();
+		alertLabel = new JLabel("");
+		add(alertLabel);
 
-		statusbar = parent.getStatusBar();
+		scoreLabel = parent.getStatusBar();
 		board = new Tetrominoes[BoardWidth * BoardHeight];
 		addKeyListener(new TAdapter());
 		clearBoard();
@@ -81,6 +84,8 @@ public class Board extends JPanel implements ActionListener {
 		isStarted = true;
 		isFallingFinished = false;
 		numLinesRemoved = 0;
+		scoreLabel.setText(getScore());
+		alertLabel.setText("");
 		clearBoard();
 
 		newPiece();
@@ -97,14 +102,19 @@ public class Board extends JPanel implements ActionListener {
 		if (isPaused) {
 
 			timer.stop();
-			statusbar.setText("paused");
+			alertLabel.setText("paused");
 		} else {
 
 			timer.start();
-			statusbar.setText(String.valueOf(numLinesRemoved));
+			alertLabel.setText("");
 		}
 
 		repaint();
+	}
+
+	private String getScore() {
+		return String.format("%07d", numLinesRemoved * 10);
+
 	}
 
 	private void doDrawing(Graphics g) {
@@ -166,8 +176,6 @@ public class Board extends JPanel implements ActionListener {
 
 		for (int i = 0; i < BoardHeight * BoardWidth; ++i)
 			board[i] = Tetrominoes.NoShape;
-		
-		statusbar.setText(String.valueOf(numLinesRemoved));
 	}
 
 	private void pieceDropped() {
@@ -176,7 +184,9 @@ public class Board extends JPanel implements ActionListener {
 
 			int x = curX + curPiece.x(i);
 			int y = curY - curPiece.y(i);
-			board[(y * BoardWidth) + x] = curPiece.getShape();
+//			board[(y * BoardWidth) + x] = curPiece.getShape();
+			int index = (y * BoardWidth) + x;
+			board[index] = curPiece.getShape();
 		}
 
 		removeFullLines();
@@ -192,12 +202,16 @@ public class Board extends JPanel implements ActionListener {
 		curY = BoardHeight - 1 + curPiece.minY();
 
 		if (!tryMove(curPiece, curX, curY)) {
-
-			curPiece.setShape(Tetrominoes.NoShape);
-			timer.stop();
-			isStarted = false;
-			statusbar.setText("game over");
+			gameOver();
 		}
+	}
+
+	private void gameOver() {
+		curPiece.setShape(Tetrominoes.NoShape);
+		timer.stop();
+		isStarted = false;
+		alertLabel.setText("Game Over");
+		parent.checkHiScore(getScore());
 	}
 
 	private boolean tryMove(Shape newPiece, int newX, int newY) {
@@ -249,7 +263,7 @@ public class Board extends JPanel implements ActionListener {
 		if (numFullLines > 0) {
 
 			numLinesRemoved += numFullLines;
-			statusbar.setText(String.valueOf(numLinesRemoved));
+			scoreLabel.setText(getScore());
 			isFallingFinished = true;
 			curPiece.setShape(Tetrominoes.NoShape);
 			repaint();
@@ -282,13 +296,13 @@ public class Board extends JPanel implements ActionListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
 
-			if (!isStarted || curPiece.getShape() == Tetrominoes.NoShape) {
-				return;
-			}
+			// if (!isStarted || curPiece.getShape() == Tetrominoes.NoShape) {
+			// return;
+			// }
 
 			int keycode = e.getKeyCode();
 
-			if (keycode == 'p' || keycode == 'P') {
+			if (keycode == KeyEvent.VK_P) {
 				pause();
 				return;
 			}
@@ -297,6 +311,15 @@ public class Board extends JPanel implements ActionListener {
 				return;
 
 			switch (keycode) {
+
+			case KeyEvent.VK_N:
+				int op = JOptionPane.showConfirmDialog(null, "Novo jogo?", "", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+
+				if (op == 0)
+					start();
+
+				break;
 
 			case KeyEvent.VK_LEFT:
 				tryMove(curPiece, curX - 1, curY);
@@ -307,29 +330,16 @@ public class Board extends JPanel implements ActionListener {
 				break;
 
 			case KeyEvent.VK_DOWN:
-//				tryMove(curPiece.rotateRight(), curX, curY);
 				oneLineDown();
 				break;
 
 			case KeyEvent.VK_UP:
-//				tryMove(curPiece.rotateLeft(), curX, curY);
 				tryMove(curPiece.rotateRight(), curX, curY);
 				break;
 
 			case KeyEvent.VK_SPACE:
 				dropDown();
 				break;
-				
-			case KeyEvent.VK_N:
-				start();
-				
-//			case 'd':
-//				oneLineDown();
-//				break;
-//
-//			case 'D':
-//				oneLineDown();
-//				break;
 			}
 		}
 	}
