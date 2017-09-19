@@ -12,4 +12,4 @@ Tretis adapted from http://zetcode.com/gfx/java2d/tetris/, based on swing API.
 
 ## Game Demo
 
-![gif animated](https://i.imgur.com/mL7vytm.gif)
+![gif animated](https://i.stack.imgur.com/HjNBl.gif)
