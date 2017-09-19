@@ -45,7 +45,7 @@ public class Board extends JPanel implements ActionListener {
 		alertLabel = new JLabel("");
 		add(alertLabel);
 
-		scoreLabel = parent.getStatusBar();
+		scoreLabel = parent.getScoreLabel();
 		board = new Tetrominoes[BoardWidth * BoardHeight];
 		addKeyListener(new TAdapter());
 		clearBoard();

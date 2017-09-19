@@ -2,14 +2,13 @@ package tetris;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -25,10 +24,20 @@ public class TetrisMain extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JLabel scoreLabel, hi_scoreLabel;
 	private Board board;
-
+	private static String str_hiscore = "";
+	
 	private static final int WIDTH = 305;
 	private static final int HEIGHT = 500;
+	
 
+	public static void main(String[] args) {
+
+		SwingUtilities.invokeLater(() -> {
+
+			TetrisMain game = new TetrisMain();
+			game.setVisible(true);
+		});
+	}
 
 	public TetrisMain() {
 
@@ -40,22 +49,22 @@ public class TetrisMain extends JFrame {
 	}
 
 	private void initUI() {
-		
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		addWindowListener(new SaveAndRestoreConfig());
 		setResizable(false);
 		setTitle("Tetris");
 
 		scoreLabel = new JLabel();
 		hi_scoreLabel = new JLabel("0000000");
-		
+
 		JPanel scorePane = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		scorePane.add(new JLabel("Score"));
 		scorePane.add(scoreLabel);
 		scorePane.add(new JLabel("Hi-Score"));
 		scorePane.add(hi_scoreLabel);
-		
-		
+
 		board = new Board(this);
 		board.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 1, Color.black));
 
@@ -71,9 +80,9 @@ public class TetrisMain extends JFrame {
 				board.pause();
 			}
 		});
-		
+
 		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
+		panel.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(new Dimension(55, HEIGHT));
 		panel.add(scorePane);
@@ -89,22 +98,26 @@ public class TetrisMain extends JFrame {
 
 	}
 
-	public JLabel getStatusBar() {
+	public JLabel getScoreLabel() {
 
 		return scoreLabel;
 	}
-	
-	public void checkHiScore(String score){
-		if(scoreLabel.getText().compareTo(hi_scoreLabel.getText()) > 0)
+
+	public void checkHiScore(String score) {
+		if (scoreLabel.getText().compareTo(hi_scoreLabel.getText()) > 0)
 			hi_scoreLabel.setText(scoreLabel.getText());
 	}
-
-	public static void main(String[] args) {
-
-		SwingUtilities.invokeLater(() -> {
-
-			TetrisMain game = new TetrisMain();
-			game.setVisible(true);
-		});
+	
+	class SaveAndRestoreConfig extends WindowAdapter{
+		
+		@Override
+		public void windowOpened(WindowEvent e) {
+			super.windowOpened(e);
+		}
+		
+		@Override
+		public void windowClosing(WindowEvent e) {
+			super.windowClosing(e);
+		}
 	}
 }
