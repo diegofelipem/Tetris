@@ -184,9 +184,7 @@ public class Board extends JPanel implements ActionListener {
 
 			int x = curX + curPiece.x(i);
 			int y = curY - curPiece.y(i);
-//			board[(y * BoardWidth) + x] = curPiece.getShape();
-			int index = (y * BoardWidth) + x;
-			board[index] = curPiece.getShape();
+			board[(y * BoardWidth) + x] = curPiece.getShape();
 		}
 
 		removeFullLines();
@@ -198,7 +196,7 @@ public class Board extends JPanel implements ActionListener {
 	private void newPiece() {
 
 		curPiece.setRandomShape();
-		curX = BoardWidth / 2 + 1;
+		curX = BoardWidth / 2;
 		curY = BoardHeight - 1 + curPiece.minY();
 
 		if (!tryMove(curPiece, curX, curY)) {
