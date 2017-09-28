@@ -24,11 +24,9 @@ public class TetrisMain extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JLabel scoreLabel, hi_scoreLabel;
 	private Board board;
-	private static String str_hiscore = "";
-	
+
 	private static final int WIDTH = 305;
 	private static final int HEIGHT = 500;
-	
 
 	public static void main(String[] args) {
 
@@ -57,7 +55,7 @@ public class TetrisMain extends JFrame {
 		setTitle("Tetris");
 
 		scoreLabel = new JLabel();
-		hi_scoreLabel = new JLabel("0000000");
+		hi_scoreLabel = new JLabel();
 
 		JPanel scorePane = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
 		scorePane.add(new JLabel("Score"));
@@ -107,17 +105,21 @@ public class TetrisMain extends JFrame {
 		if (scoreLabel.getText().compareTo(hi_scoreLabel.getText()) > 0)
 			hi_scoreLabel.setText(scoreLabel.getText());
 	}
-	
-	class SaveAndRestoreConfig extends WindowAdapter{
-		
+
+	class SaveAndRestoreConfig extends WindowAdapter {
+
 		@Override
 		public void windowOpened(WindowEvent e) {
 			super.windowOpened(e);
+			String hiScore = ConfigManager.loadConfig("RECORD");
+			hi_scoreLabel.setText(hiScore == null ? "0000000" : hiScore);
+			repaint();
 		}
-		
+
 		@Override
 		public void windowClosing(WindowEvent e) {
 			super.windowClosing(e);
+			ConfigManager.saveConfig("RECORD", hi_scoreLabel.getText());
 		}
 	}
 }
