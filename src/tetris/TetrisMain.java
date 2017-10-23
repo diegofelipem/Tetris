@@ -25,7 +25,7 @@ public class TetrisMain extends JFrame {
 	private JLabel scoreLabel, hi_scoreLabel;
 	private Board board;
 
-	private static final int WIDTH = 305;
+	private static final int WIDTH = 300;
 	private static final int HEIGHT = 500;
 
 	public static void main(String[] args) {
@@ -79,16 +79,16 @@ public class TetrisMain extends JFrame {
 			}
 		});
 
-		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.setPreferredSize(new Dimension(55, HEIGHT));
-		panel.add(scorePane);
-		panel.add(Box.createVerticalGlue());
-		panel.add(helpLabel);
+		JPanel sidePanel = new JPanel();
+		sidePanel.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
+		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+		sidePanel.setPreferredSize(new Dimension(50, HEIGHT));
+		sidePanel.add(scorePane);
+		sidePanel.add(Box.createVerticalGlue());
+		sidePanel.add(helpLabel);
 
 		add(board, BorderLayout.CENTER);
-		add(panel, BorderLayout.EAST);
+		add(sidePanel, BorderLayout.EAST);
 		board.start();
 
 		pack();

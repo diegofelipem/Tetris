@@ -32,6 +32,8 @@ public class Board extends JPanel implements ActionListener {
 	private Tetrominoes[] board;
 	private TetrisMain parent;
 
+	private int speed = 400;
+
 	public Board(TetrisMain parent) {
 		this.parent = parent;
 		initBoard();
@@ -41,7 +43,7 @@ public class Board extends JPanel implements ActionListener {
 
 		setFocusable(true);
 		curPiece = new Shape();
-		timer = new Timer(400, this);
+		timer = new Timer(speed, this);
 		alertLabel = new JLabel("");
 		add(alertLabel);
 
@@ -55,14 +57,13 @@ public class Board extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (isFallingFinished) {
-
 			isFallingFinished = false;
 			newPiece();
 		} else {
-
 			oneLineDown();
 		}
 	}
+
 
 	private int squareWidth() {
 		return (int) getSize().getWidth() / BoardWidth;
@@ -270,13 +271,8 @@ public class Board extends JPanel implements ActionListener {
 
 	private void drawSquare(Graphics g, int x, int y, Tetrominoes shape) {
 
-		Color colors[] = { new Color(0, 0, 0), 
-				new Color(150, 100, 50), 
-				new Color(102, 204, 102),
-				new Color(102, 102, 204), 
-				new Color(240, 220, 50), 
-				new Color(204, 80, 204), 
-				new Color(100, 220, 200),
+		Color colors[] = { new Color(0, 0, 0), new Color(150, 100, 50), new Color(102, 204, 102),
+				new Color(102, 102, 204), new Color(240, 220, 50), new Color(204, 80, 204), new Color(100, 220, 200),
 				new Color(220, 20, 50) };
 
 		Color color = colors[shape.ordinal()];
